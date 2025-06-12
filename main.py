@@ -44,7 +44,7 @@ imageUrls = [
     ]
 
 
-imageCarouselComponent(imageUrls=imageUrls, height=200)
+
 selectvalue=st.selectbox("Select movie from dropdown", movies_list)
 
 def recommend(movie):
