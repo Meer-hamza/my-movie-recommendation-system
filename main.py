@@ -23,7 +23,7 @@ movies_list=movies['title'].values
 
 st.header("Movie Recommender System")
 
-st.image(imageUrls, width=150, caption=["Poster "+str(i+1) for i in range(len(imageUrls))])
+
 
 
 imageUrls = [
