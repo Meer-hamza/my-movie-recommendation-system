@@ -1,6 +1,8 @@
 import streamlit as st
 import pickle 
 import requests
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 def fetch_poster(movie_id):
      url = "https://api.themoviedb.org/3/movie/{}?api_key=c7ec19ffdd3279641fb606d19ceb9bb1&language=en-US".format(movie_id)
@@ -11,46 +13,10 @@ def fetch_poster(movie_id):
      return full_path
 import os
 
-# Download the file from Google Drive (only if it doesn't exist yet)
-import requests
-
-def download_file_from_google_drive(file_id, destination):
-    def get_confirm_token(response):
-        for key, value in response.cookies.items():
-            if key.startswith('download_warning'):
-                return value
-        return None
-
-    def save_response_content(response, destination):
-        CHUNK_SIZE = 32768
-        with open(destination, "wb") as f:
-            for chunk in response.iter_content(CHUNK_SIZE):
-                if chunk:
-                    f.write(chunk)
-
-    URL = "https://docs.google.com/uc?export=download"
-    session = requests.Session()
-
-    response = session.get(URL, params={'id': file_id}, stream=True)
-    token = get_confirm_token(response)
-
-    if token:
-        params = {'id': file_id, 'confirm': token}
-        response = session.get(URL, params=params, stream=True)
-
-    save_response_content(response, destination)
-
-# Replace this with your actual file ID and desired save name
-# Download similarity.pkl if not exists
-file_id = '17YGxCbDCcTBZCdCvVdGj3y7Lcn7rxFIS'
-destination = 'similarity.pkl'
-
-if not os.path.exists(destination):
-    download_file_from_google_drive(file_id, destination)
-
-# Now unpickle
-with open(destination, 'rb') as f:
-    similarity = pickle.load(f)
+movies['tags'] = movies['tags'].fillna('')
+tfidf = TfidfVectorizer(stop_words='english')
+tfidf_matrix = tfidf.fit_transform(movies['tags'])
+similarity = cosine_similarity(tfidf_matrix)
 movies = pickle.load(open("movies_list.pkl", 'rb'))
 
 movies_list=movies['title'].values
