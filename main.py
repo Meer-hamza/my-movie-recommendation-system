@@ -9,9 +9,31 @@ def fetch_poster(movie_id):
      poster_path = data['poster_path']
      full_path = "https://image.tmdb.org/t/p/w500/"+poster_path
      return full_path
+import os
 
+# Download the file from Google Drive (only if it doesn't exist yet)
+def download_file_from_google_drive(file_id, dest_path):
+    if not os.path.exists(dest_path):
+        url = f'https://drive.google.com/uc?export=download&id={file_id}'
+        print("Downloading large file from Google Drive...")
+        response = requests.get(url)
+        with open(dest_path, 'wb') as f:
+            f.write(response.content)
+        print("Download complete.")
+    else:
+        print("File already exists locally.")
+
+# Replace this with your actual file ID and desired save name
+file_id = '17YGxCbDCcTBZCdCvVdGj3y7Lcn7rxFIS'
+destination = 'similarity.pkl'
+
+download_file_from_google_drive(file_id, destination)
+
+# Load the file
+with open(destination, 'rb') as f:
+    similarity = pickle.load(f)
 movies = pickle.load(open("movies_list.pkl", 'rb'))
-similarity = pickle.load(open("similarity.pkl", 'rb'))
+
 movies_list=movies['title'].values
 
 st.header("Movie Recommender System")
