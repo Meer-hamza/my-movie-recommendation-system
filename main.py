@@ -12,9 +12,9 @@ def fetch_poster(movie_id):
 import os
 
 # Download the file from Google Drive (only if it doesn't exist yet)
-def download_file_from_google_drive(file_id, destination):
-    import requests
+import requests
 
+def download_file_from_google_drive(file_id, destination):
     def get_confirm_token(response):
         for key, value in response.cookies.items():
             if key.startswith('download_warning'):
@@ -39,13 +39,16 @@ def download_file_from_google_drive(file_id, destination):
         response = session.get(URL, params=params, stream=True)
 
     save_response_content(response, destination)
+
 # Replace this with your actual file ID and desired save name
+# Download similarity.pkl if not exists
 file_id = '17YGxCbDCcTBZCdCvVdGj3y7Lcn7rxFIS'
 destination = 'similarity.pkl'
 
-download_file_from_google_drive(file_id, destination)
+if not os.path.exists(destination):
+    download_file_from_google_drive(file_id, destination)
 
-# Load the file
+# Now unpickle
 with open(destination, 'rb') as f:
     similarity = pickle.load(f)
 movies = pickle.load(open("movies_list.pkl", 'rb'))
