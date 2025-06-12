@@ -23,9 +23,7 @@ movies_list=movies['title'].values
 
 st.header("Movie Recommender System")
 
-import streamlit.components.v1 as components
-
-imageCarouselComponent = components.declare_component("image-carousel-component", path="frontend/public")
+st.image(imageUrls, width=150, caption=["Poster "+str(i+1) for i in range(len(imageUrls))])
 
 
 imageUrls = [
