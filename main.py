@@ -12,17 +12,33 @@ def fetch_poster(movie_id):
 import os
 
 # Download the file from Google Drive (only if it doesn't exist yet)
-def download_file_from_google_drive(file_id, dest_path):
-    if not os.path.exists(dest_path):
-        url = f'https://drive.google.com/uc?export=download&id={file_id}'
-        print("Downloading large file from Google Drive...")
-        response = requests.get(url)
-        with open(dest_path, 'wb') as f:
-            f.write(response.content)
-        print("Download complete.")
-    else:
-        print("File already exists locally.")
+def download_file_from_google_drive(file_id, destination):
+    import requests
 
+    def get_confirm_token(response):
+        for key, value in response.cookies.items():
+            if key.startswith('download_warning'):
+                return value
+        return None
+
+    def save_response_content(response, destination):
+        CHUNK_SIZE = 32768
+        with open(destination, "wb") as f:
+            for chunk in response.iter_content(CHUNK_SIZE):
+                if chunk:
+                    f.write(chunk)
+
+    URL = "https://docs.google.com/uc?export=download"
+    session = requests.Session()
+
+    response = session.get(URL, params={'id': file_id}, stream=True)
+    token = get_confirm_token(response)
+
+    if token:
+        params = {'id': file_id, 'confirm': token}
+        response = session.get(URL, params=params, stream=True)
+
+    save_response_content(response, destination)
 # Replace this with your actual file ID and desired save name
 file_id = '17YGxCbDCcTBZCdCvVdGj3y7Lcn7rxFIS'
 destination = 'similarity.pkl'
