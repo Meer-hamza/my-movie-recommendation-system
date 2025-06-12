@@ -12,12 +12,12 @@ def fetch_poster(movie_id):
      full_path = "https://image.tmdb.org/t/p/w500/"+poster_path
      return full_path
 import os
-
+movies = pickle.load(open("movies_list.pkl", 'rb'))
 movies['tags'] = movies['tags'].fillna('')
 tfidf = TfidfVectorizer(stop_words='english')
 tfidf_matrix = tfidf.fit_transform(movies['tags'])
 similarity = cosine_similarity(tfidf_matrix)
-movies = pickle.load(open("movies_list.pkl", 'rb'))
+
 
 movies_list=movies['title'].values
 
